@@ -69,3 +69,37 @@ export interface ShippingAddress {
   country: string;
   phone: string;
 }
+
+// Additional types for Supabase integration
+export interface SupabaseProduct {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  discount: number;
+  category: string;
+  vendor: string;
+  images: string[];
+  stock: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface WishlistItem {
+  id: string;
+  user_id: string;
+  product_id: string;
+  created_at: string;
+  product?: SupabaseProduct;
+}
+
+export interface UserProfile {
+  id: string;
+  full_name: string;
+  avatar_url: string;
+  email: string;
+  phone: string;
+  default_shipping_address: ShippingAddress;
+  created_at: string;
+  updated_at: string;
+}

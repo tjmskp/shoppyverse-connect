@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/contexts/AuthContext";
 
 enum AuthMode {
   LOGIN = "login",
@@ -20,77 +20,65 @@ enum UserRole {
 
 const Login = () => {
   const navigate = useNavigate();
+  const { user, signIn, signUp } = useAuth();
   const [mode, setMode] = useState<AuthMode>(AuthMode.LOGIN);
   const [isLoading, setIsLoading] = useState(false);
   const [userRole, setUserRole] = useState<UserRole>(UserRole.CUSTOMER);
   
-  // Login form state
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
+  
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   
-  // Register form state
   const [registerName, setRegisterName] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [registerConfirmPassword, setRegisterConfirmPassword] = useState("");
   
-  // Vendor specific registration fields
   const [storeName, setStoreName] = useState("");
   const [storeDescription, setStoreDescription] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [address, setAddress] = useState("");
   const [acceptTerms, setAcceptTerms] = useState(false);
   
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const { success, error } = await signIn(loginEmail, loginPassword);
       
-      // Hardcoded admin login check
-      if (loginEmail === "tjms.kp@gmail.com" && loginPassword === "Pjokjict4@#") {
-        toast({
-          title: "Admin login successful",
-          description: "Redirecting to admin dashboard...",
-        });
-        navigate("/admin/dashboard");
-        return;
-      }
-      
-      // Simulate vendor login check (in a real app, this would be authenticated through Supabase)
-      if (loginEmail.includes("vendor") && loginPassword.length > 0) {
-        toast({
-          title: "Vendor login successful",
-          description: "Redirecting to vendor dashboard...",
-        });
-        navigate("/vendor/dashboard");
-        return;
-      }
-      
-      // Simulate customer login
-      if (loginEmail.length > 0 && loginPassword.length > 0) {
+      if (success) {
         toast({
           title: "Login successful",
           description: "Welcome back to Shoppygain!",
         });
-        navigate("/");
-        return;
+        navigate('/');
+      } else {
+        toast({
+          title: "Login failed",
+          description: error || "Invalid email or password. Please try again.",
+          variant: "destructive",
+        });
       }
-      
+    } catch (error: any) {
       toast({
         title: "Login failed",
-        description: "Invalid email or password. Please try again.",
+        description: error.message || "An unexpected error occurred",
         variant: "destructive",
       });
-    }, 1000);
+    } finally {
+      setIsLoading(false);
+    }
   };
   
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Simple validation
     if (registerPassword !== registerConfirmPassword) {
       toast({
         title: "Passwords don't match",
@@ -111,24 +99,49 @@ const Login = () => {
     
     setIsLoading(true);
     
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const userMetadata = {
+        full_name: registerName,
+        role: userRole.toLowerCase(),
+      };
       
       if (userRole === UserRole.VENDOR) {
-        toast({
-          title: "Vendor registration successful",
-          description: "Your vendor account has been created. Please log in to access your dashboard.",
-        });
-      } else {
-        toast({
-          title: "Registration successful",
-          description: "Your account has been created. Please log in.",
+        Object.assign(userMetadata, {
+          store_name: storeName,
+          store_description: storeDescription,
+          phone: phoneNumber,
+          address: address,
         });
       }
       
-      setMode(AuthMode.LOGIN);
-    }, 1000);
+      const { success, error } = await signUp(
+        registerEmail, 
+        registerPassword,
+        userMetadata
+      );
+      
+      if (success) {
+        toast({
+          title: "Registration successful",
+          description: "Please check your email to verify your account.",
+        });
+        setMode(AuthMode.LOGIN);
+      } else {
+        toast({
+          title: "Registration failed",
+          description: error || "An error occurred during registration",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Registration failed",
+        description: error.message || "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -146,7 +159,6 @@ const Login = () => {
             </p>
           </div>
           
-          {/* Auth Tabs */}
           <div className="flex border-b border-gray-200 mb-8">
             <button
               className={`flex-1 py-3 font-medium text-center transition-colors ${
@@ -170,7 +182,6 @@ const Login = () => {
             </button>
           </div>
           
-          {/* Login Form */}
           {mode === AuthMode.LOGIN && (
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
@@ -260,7 +271,6 @@ const Login = () => {
             </form>
           )}
           
-          {/* Register Form */}
           {mode === AuthMode.REGISTER && (
             <div>
               <Tabs defaultValue={UserRole.CUSTOMER} className="mb-6">

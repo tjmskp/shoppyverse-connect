@@ -1,35 +1,147 @@
 
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { X, ShoppingCart, Heart } from "lucide-react";
 import { mockProducts } from "@/data/mockData";
 import { toast } from "@/hooks/use-toast";
-import { Product } from "@/types";
+import { Product, WishlistItem } from "@/types";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Wishlist = () => {
-  // Mock wishlist items for now
-  const [wishlistItems, setWishlistItems] = useState<Product[]>([
-    mockProducts[0],
-    mockProducts[3],
-    mockProducts[5],
-  ]);
+  const [wishlistItems, setWishlistItems] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const navigate = useNavigate();
   
-  const removeFromWishlist = (productId: string) => {
-    setWishlistItems(prev => prev.filter(item => item.id !== productId));
-    toast({
-      title: "Removed from wishlist",
-      description: "The item has been removed from your wishlist",
-    });
+  useEffect(() => {
+    if (!user) {
+      // If not logged in, redirect to login
+      navigate('/login');
+      return;
+    }
+    
+    fetchWishlistItems();
+  }, [user]);
+  
+  const fetchWishlistItems = async () => {
+    try {
+      setLoading(true);
+      
+      const { data, error } = await supabase
+        .from('wishlist_items')
+        .select(`
+          id,
+          user_id,
+          product_id,
+          created_at,
+          products:product_id (*)
+        `)
+        .eq('user_id', user?.id);
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Transform the data to match our Product interface
+      const formattedProducts = data.map((item: any) => {
+        // For now, we'll use the mock data as a fallback
+        const mockProduct = mockProducts.find(p => p.id === item.product_id) || mockProducts[0];
+        
+        if (item.products) {
+          return {
+            ...mockProduct,
+            id: item.product_id,
+            name: item.products.name,
+            description: item.products.description,
+            price: item.products.price,
+            discount: item.products.discount,
+            category: item.products.category,
+            stock: item.products.stock,
+            vendor: item.products.vendor,
+            images: item.products.images,
+          };
+        }
+        
+        return mockProduct;
+      });
+      
+      setWishlistItems(formattedProducts);
+    } catch (error: any) {
+      console.error("Error fetching wishlist:", error.message);
+      toast({
+        title: "Failed to load wishlist",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const removeFromWishlist = async (productId: string) => {
+    try {
+      if (!user) return;
+      
+      const { error } = await supabase
+        .from('wishlist_items')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('product_id', productId);
+      
+      if (error) throw error;
+      
+      setWishlistItems(prev => prev.filter(item => item.id !== productId));
+      
+      toast({
+        title: "Removed from wishlist",
+        description: "The item has been removed from your wishlist",
+      });
+    } catch (error: any) {
+      console.error("Error removing from wishlist:", error.message);
+      toast({
+        title: "Failed to remove item",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
   
   const addToCart = (product: Product) => {
-    // Add to cart logic will be implemented with context
+    // Implement real cart logic with Supabase in the future
     toast({
       title: "Added to cart",
       description: `${product.name} has been added to your cart`,
     });
+  };
+  
+  const clearWishlist = async () => {
+    try {
+      if (!user) return;
+      
+      const { error } = await supabase
+        .from('wishlist_items')
+        .delete()
+        .eq('user_id', user.id);
+      
+      if (error) throw error;
+      
+      setWishlistItems([]);
+      
+      toast({
+        title: "Wishlist cleared",
+        description: "All items have been removed from your wishlist",
+      });
+    } catch (error: any) {
+      console.error("Error clearing wishlist:", error.message);
+      toast({
+        title: "Failed to clear wishlist",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
   
   return (
@@ -37,7 +149,11 @@ const Wishlist = () => {
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-8">My Wishlist</h1>
         
-        {wishlistItems.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
+          </div>
+        ) : wishlistItems.length === 0 ? (
           <div className="text-center py-16">
             <div className="inline-flex justify-center items-center w-24 h-24 bg-gray-100 rounded-full mb-6">
               <Heart size={36} className="text-gray-400" />
@@ -146,13 +262,7 @@ const Wishlist = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  setWishlistItems([]);
-                  toast({
-                    title: "Wishlist cleared",
-                    description: "All items have been removed from your wishlist",
-                  });
-                }}
+                onClick={clearWishlist}
               >
                 Clear Wishlist
               </Button>
