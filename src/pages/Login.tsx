@@ -1,19 +1,28 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 enum AuthMode {
   LOGIN = "login",
   REGISTER = "register",
 }
 
+enum UserRole {
+  CUSTOMER = "customer",
+  VENDOR = "vendor",
+}
+
 const Login = () => {
+  const navigate = useNavigate();
   const [mode, setMode] = useState<AuthMode>(AuthMode.LOGIN);
   const [isLoading, setIsLoading] = useState(false);
+  const [userRole, setUserRole] = useState<UserRole>(UserRole.CUSTOMER);
   
   // Login form state
   const [loginEmail, setLoginEmail] = useState("");
@@ -24,6 +33,13 @@ const Login = () => {
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [registerConfirmPassword, setRegisterConfirmPassword] = useState("");
+  
+  // Vendor specific registration fields
+  const [storeName, setStoreName] = useState("");
+  const [storeDescription, setStoreDescription] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [address, setAddress] = useState("");
+  const [acceptTerms, setAcceptTerms] = useState(false);
   
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,13 +55,35 @@ const Login = () => {
           title: "Admin login successful",
           description: "Redirecting to admin dashboard...",
         });
-        // In a real app, would redirect to admin dashboard and set auth state
-      } else {
-        toast({
-          title: "Login failed",
-          description: "Invalid email or password. Please try again.",
-        });
+        navigate("/admin/dashboard");
+        return;
       }
+      
+      // Simulate vendor login check (in a real app, this would be authenticated through Supabase)
+      if (loginEmail.includes("vendor") && loginPassword.length > 0) {
+        toast({
+          title: "Vendor login successful",
+          description: "Redirecting to vendor dashboard...",
+        });
+        navigate("/vendor/dashboard");
+        return;
+      }
+      
+      // Simulate customer login
+      if (loginEmail.length > 0 && loginPassword.length > 0) {
+        toast({
+          title: "Login successful",
+          description: "Welcome back to Shoppygain!",
+        });
+        navigate("/");
+        return;
+      }
+      
+      toast({
+        title: "Login failed",
+        description: "Invalid email or password. Please try again.",
+        variant: "destructive",
+      });
     }, 1000);
   };
   
@@ -57,6 +95,16 @@ const Login = () => {
       toast({
         title: "Passwords don't match",
         description: "Please make sure your passwords match.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (userRole === UserRole.VENDOR && !acceptTerms) {
+      toast({
+        title: "Terms and conditions required",
+        description: "You must accept the terms and conditions to register as a vendor.",
+        variant: "destructive",
       });
       return;
     }
@@ -66,10 +114,19 @@ const Login = () => {
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      toast({
-        title: "Registration successful",
-        description: "Your account has been created. Please log in.",
-      });
+      
+      if (userRole === UserRole.VENDOR) {
+        toast({
+          title: "Vendor registration successful",
+          description: "Your vendor account has been created. Please log in to access your dashboard.",
+        });
+      } else {
+        toast({
+          title: "Registration successful",
+          description: "Your account has been created. Please log in.",
+        });
+      }
+      
       setMode(AuthMode.LOGIN);
     }, 1000);
   };
@@ -205,92 +262,263 @@ const Login = () => {
           
           {/* Register Form */}
           {mode === AuthMode.REGISTER && (
-            <form onSubmit={handleRegister} className="space-y-4">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name
-                </label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Your full name"
-                  value={registerName}
-                  onChange={(e) => setRegisterName(e.target.value)}
-                  required
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="register-email" className="block text-sm font-medium text-gray-700 mb-1">
-                  Email
-                </label>
-                <Input
-                  id="register-email"
-                  type="email"
-                  placeholder="Your email address"
-                  value={registerEmail}
-                  onChange={(e) => setRegisterEmail(e.target.value)}
-                  required
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="register-password" className="block text-sm font-medium text-gray-700 mb-1">
-                  Password
-                </label>
-                <Input
-                  id="register-password"
-                  type="password"
-                  placeholder="Create a password"
-                  value={registerPassword}
-                  onChange={(e) => setRegisterPassword(e.target.value)}
-                  required
-                  minLength={8}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Password must be at least 8 characters long
-                </p>
-              </div>
-              
-              <div>
-                <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-1">
-                  Confirm Password
-                </label>
-                <Input
-                  id="confirm-password"
-                  type="password"
-                  placeholder="Confirm your password"
-                  value={registerConfirmPassword}
-                  onChange={(e) => setRegisterConfirmPassword(e.target.value)}
-                  required
-                  minLength={8}
-                />
-              </div>
-              
-              <div className="flex items-center">
-                <input
-                  id="terms"
-                  type="checkbox"
-                  className="h-4 w-4 border-gray-300 rounded"
-                  required
-                />
-                <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
-                  I agree to the{" "}
-                  <Link to="/terms" className="text-black hover:underline">
-                    Terms of Service
-                  </Link>{" "}
-                  and{" "}
-                  <Link to="/privacy" className="text-black hover:underline">
-                    Privacy Policy
-                  </Link>
-                </label>
-              </div>
-              
-              <div className="pt-2">
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Creating Account..." : "Create Account"}
-                </Button>
-              </div>
+            <div>
+              <Tabs defaultValue={UserRole.CUSTOMER} className="mb-6">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger 
+                    value={UserRole.CUSTOMER}
+                    onClick={() => setUserRole(UserRole.CUSTOMER)}
+                  >
+                    Customer
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value={UserRole.VENDOR}
+                    onClick={() => setUserRole(UserRole.VENDOR)}
+                  >
+                    Vendor
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value={UserRole.CUSTOMER} className="mt-4">
+                  <form onSubmit={handleRegister} className="space-y-4">
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                        Full Name
+                      </label>
+                      <Input
+                        id="name"
+                        type="text"
+                        placeholder="Your full name"
+                        value={registerName}
+                        onChange={(e) => setRegisterName(e.target.value)}
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="register-email" className="block text-sm font-medium text-gray-700 mb-1">
+                        Email
+                      </label>
+                      <Input
+                        id="register-email"
+                        type="email"
+                        placeholder="Your email address"
+                        value={registerEmail}
+                        onChange={(e) => setRegisterEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="register-password" className="block text-sm font-medium text-gray-700 mb-1">
+                        Password
+                      </label>
+                      <Input
+                        id="register-password"
+                        type="password"
+                        placeholder="Create a password"
+                        value={registerPassword}
+                        onChange={(e) => setRegisterPassword(e.target.value)}
+                        required
+                        minLength={8}
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Password must be at least 8 characters long
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-1">
+                        Confirm Password
+                      </label>
+                      <Input
+                        id="confirm-password"
+                        type="password"
+                        placeholder="Confirm your password"
+                        value={registerConfirmPassword}
+                        onChange={(e) => setRegisterConfirmPassword(e.target.value)}
+                        required
+                        minLength={8}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center">
+                      <Checkbox 
+                        id="terms" 
+                        required 
+                        className="border-gray-300"
+                      />
+                      <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
+                        I agree to the{" "}
+                        <Link to="/terms" className="text-black hover:underline">
+                          Terms of Service
+                        </Link>{" "}
+                        and{" "}
+                        <Link to="/privacy" className="text-black hover:underline">
+                          Privacy Policy
+                        </Link>
+                      </label>
+                    </div>
+                    
+                    <div className="pt-2">
+                      <Button type="submit" className="w-full" disabled={isLoading}>
+                        {isLoading ? "Creating Account..." : "Create Account"}
+                      </Button>
+                    </div>
+                  </form>
+                </TabsContent>
+                
+                <TabsContent value={UserRole.VENDOR} className="mt-4">
+                  <form onSubmit={handleRegister} className="space-y-4">
+                    <div>
+                      <label htmlFor="vendor-name" className="block text-sm font-medium text-gray-700 mb-1">
+                        Full Name
+                      </label>
+                      <Input
+                        id="vendor-name"
+                        type="text"
+                        placeholder="Your full name"
+                        value={registerName}
+                        onChange={(e) => setRegisterName(e.target.value)}
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="store-name" className="block text-sm font-medium text-gray-700 mb-1">
+                        Store Name
+                      </label>
+                      <Input
+                        id="store-name"
+                        type="text"
+                        placeholder="Your store name"
+                        value={storeName}
+                        onChange={(e) => setStoreName(e.target.value)}
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="store-description" className="block text-sm font-medium text-gray-700 mb-1">
+                        Store Description
+                      </label>
+                      <Input
+                        id="store-description"
+                        type="text"
+                        placeholder="Brief description of your store"
+                        value={storeDescription}
+                        onChange={(e) => setStoreDescription(e.target.value)}
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="vendor-email" className="block text-sm font-medium text-gray-700 mb-1">
+                        Email
+                      </label>
+                      <Input
+                        id="vendor-email"
+                        type="email"
+                        placeholder="Your business email address"
+                        value={registerEmail}
+                        onChange={(e) => setRegisterEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="phone-number" className="block text-sm font-medium text-gray-700 mb-1">
+                        Phone Number
+                      </label>
+                      <Input
+                        id="phone-number"
+                        type="tel"
+                        placeholder="Your business phone number"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                        Business Address
+                      </label>
+                      <Input
+                        id="address"
+                        type="text"
+                        placeholder="Your business address"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="vendor-password" className="block text-sm font-medium text-gray-700 mb-1">
+                        Password
+                      </label>
+                      <Input
+                        id="vendor-password"
+                        type="password"
+                        placeholder="Create a password"
+                        value={registerPassword}
+                        onChange={(e) => setRegisterPassword(e.target.value)}
+                        required
+                        minLength={8}
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Password must be at least 8 characters long
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="vendor-confirm-password" className="block text-sm font-medium text-gray-700 mb-1">
+                        Confirm Password
+                      </label>
+                      <Input
+                        id="vendor-confirm-password"
+                        type="password"
+                        placeholder="Confirm your password"
+                        value={registerConfirmPassword}
+                        onChange={(e) => setRegisterConfirmPassword(e.target.value)}
+                        required
+                        minLength={8}
+                      />
+                    </div>
+                    
+                    <div className="flex items-start mt-4">
+                      <Checkbox 
+                        id="vendor-terms" 
+                        checked={acceptTerms}
+                        onCheckedChange={(checked) => setAcceptTerms(checked === true)}
+                        className="border-gray-300 mt-1"
+                      />
+                      <label htmlFor="vendor-terms" className="ml-2 block text-sm text-gray-700">
+                        I agree to the{" "}
+                        <Link to="/terms" className="text-black hover:underline">
+                          Terms of Service
+                        </Link>
+                        ,{" "}
+                        <Link to="/privacy" className="text-black hover:underline">
+                          Privacy Policy
+                        </Link>
+                        , and the{" "}
+                        <Link to="/vendor-agreement" className="text-black hover:underline">
+                          Vendor Agreement
+                        </Link>
+                        . I confirm that my business is registered in Bangladesh.
+                      </label>
+                    </div>
+                    
+                    <div className="pt-2">
+                      <Button type="submit" className="w-full" disabled={isLoading}>
+                        {isLoading ? "Creating Vendor Account..." : "Create Vendor Account"}
+                      </Button>
+                    </div>
+                  </form>
+                </TabsContent>
+              </Tabs>
               
               <p className="mt-4 text-center text-sm text-gray-600">
                 Already have an account?{" "}
@@ -302,7 +530,7 @@ const Login = () => {
                   Sign in
                 </button>
               </p>
-            </form>
+            </div>
           )}
           
           <div className="mt-8 text-center text-sm text-gray-500">

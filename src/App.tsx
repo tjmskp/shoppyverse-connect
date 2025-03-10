@@ -11,6 +11,10 @@ import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
+// Dashboard routes
+import VendorDashboard from "./pages/vendor/Dashboard";
+import AdminDashboard from "./pages/admin/Dashboard";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -25,6 +29,13 @@ const App = () => (
           <Route path="/vendors" element={<Vendors />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/login" element={<Login />} />
+          
+          {/* Vendor Routes */}
+          <Route path="/vendor/dashboard" element={<VendorDashboard />} />
+          
+          {/* Admin Routes */}
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
