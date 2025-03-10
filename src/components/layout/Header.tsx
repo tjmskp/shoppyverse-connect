@@ -2,15 +2,16 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { 
   ShoppingCart, 
   User, 
   Search, 
   Menu, 
   X, 
-  Heart 
+  Heart,
+  Store
 } from "lucide-react";
+import SearchBar from "@/components/search/SearchBar";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -81,24 +82,7 @@ const Header = () => {
         </div>
 
         {/* Search Bar (shown when search is toggled) */}
-        {isSearchOpen && (
-          <div className="py-3 border-t border-gray-200 animate-in fade-in slide-in-from-top-4 duration-300">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-              <Input 
-                placeholder="Search for products, brands, or categories..." 
-                className="pl-10 pr-4 py-2 w-full"
-                autoFocus
-              />
-              <button 
-                onClick={toggleSearch}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-black"
-              >
-                <X size={18} />
-              </button>
-            </div>
-          </div>
-        )}
+        <SearchBar isOpen={isSearchOpen} onClose={toggleSearch} />
       </div>
 
       {/* Mobile Menu (shown when menu is toggled) */}
@@ -151,9 +135,13 @@ const Header = () => {
           <div className="mt-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-              <Input 
+              <input 
                 placeholder="Search for products..." 
-                className="pl-10 w-full"
+                className="pl-10 w-full border border-gray-200 rounded-md py-2"
+                onClick={() => {
+                  toggleMenu();
+                  toggleSearch();
+                }}
               />
             </div>
           </div>
