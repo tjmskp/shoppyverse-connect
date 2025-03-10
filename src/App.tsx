@@ -7,7 +7,13 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import Vendors from "./pages/Vendors";
+import VendorStore from "./pages/VendorStore";
+import ProductDetail from "./pages/ProductDetail";
+import Category from "./pages/Category";
 import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
+import OrderConfirmation from "./pages/OrderConfirmation";
+import Wishlist from "./pages/Wishlist";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
@@ -27,7 +33,13 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/vendors" element={<Vendors />} />
+          <Route path="/vendor/:id" element={<VendorStore />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/category/:slug" element={<Category />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-confirmation" element={<OrderConfirmation />} />
+          <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/login" element={<Login />} />
           
           {/* Vendor Routes */}

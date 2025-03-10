@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Heart, ShoppingCart, Eye } from "lucide-react";
 import { Product } from "@/types";
 import { toast } from "@/hooks/use-toast";
@@ -10,6 +10,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
   const [favorited, setFavorited] = useState(false);
   
@@ -78,13 +79,16 @@ const ProductCard = ({ product }: ProductCardProps) => {
               >
                 <Heart size={18} className={favorited ? "fill-current" : ""} />
               </button>
-              <Link 
-                to={`/product/${product.id}`}
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate(`/product/${product.id}`);
+                }}
                 className="bg-white text-black p-2 rounded-full hover:bg-gray-100 transition-colors"
                 aria-label="Quick view"
               >
                 <Eye size={18} />
-              </Link>
+              </button>
             </div>
           </div>
         </div>

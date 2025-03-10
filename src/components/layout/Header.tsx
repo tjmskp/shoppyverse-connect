@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
   ShoppingCart, 
@@ -14,8 +14,10 @@ import {
 import SearchBar from "@/components/search/SearchBar";
 
 const Header = () => {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [cartItemCount, setCartItemCount] = useState(2); // Mock cart count for now
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
@@ -55,9 +57,11 @@ const Header = () => {
             </Link>
             <Link to="/cart" className="p-2 hover:bg-gray-100 rounded-full relative">
               <ShoppingCart size={20} />
-              <span className="absolute -top-1 -right-1 bg-black text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                0
-              </span>
+              {cartItemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-black text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                  {cartItemCount}
+                </span>
+              )}
             </Link>
             <Link to="/login">
               <Button variant="outline" size="sm" className="flex items-center gap-2">
@@ -71,9 +75,11 @@ const Header = () => {
           <div className="md:hidden flex items-center space-x-4">
             <Link to="/cart" className="p-2 hover:bg-gray-100 rounded-full relative">
               <ShoppingCart size={20} />
-              <span className="absolute -top-1 -right-1 bg-black text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                0
-              </span>
+              {cartItemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-black text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                  {cartItemCount}
+                </span>
+              )}
             </Link>
             <button onClick={toggleMenu} className="p-2 hover:bg-gray-100 rounded-full">
               {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
