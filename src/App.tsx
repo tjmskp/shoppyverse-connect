@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import Shop from "./pages/Shop";
 import Vendors from "./pages/Vendors";
@@ -30,34 +31,36 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/shop" element={<Shop />} />
-            <Route path="/vendors" element={<Vendors />} />
-            <Route path="/vendor/:id" element={<VendorStore />} />
-            <Route path="/product/:id" element={<ProductDetail />} />
-            <Route path="/category/:slug" element={<Category />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/order-confirmation" element={<OrderConfirmation />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/login" element={<Login />} />
-            
-            {/* Vendor Routes */}
-            <Route path="/vendor/dashboard" element={<VendorDashboard />} />
-            <Route path="/vendor/bulk-import" element={<VendorBulkImport />} />
-            
-            {/* Admin Routes */}
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/bulk-import" element={<AdminBulkImport />} />
-            
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <LanguageProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/shop" element={<Shop />} />
+              <Route path="/vendors" element={<Vendors />} />
+              <Route path="/vendor/:id" element={<VendorStore />} />
+              <Route path="/product/:id" element={<ProductDetail />} />
+              <Route path="/category/:slug" element={<Category />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/order-confirmation" element={<OrderConfirmation />} />
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/login" element={<Login />} />
+              
+              {/* Vendor Routes */}
+              <Route path="/vendor/dashboard" element={<VendorDashboard />} />
+              <Route path="/vendor/bulk-import" element={<VendorBulkImport />} />
+              
+              {/* Admin Routes */}
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/bulk-import" element={<AdminBulkImport />} />
+              
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </LanguageProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>

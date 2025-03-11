@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, ShoppingBag, ChevronRight } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const OrderConfirmation = () => {
   // Generate a random order number
   const orderNumber = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
+  const { t } = useLanguage();
   
   return (
     <Layout>
@@ -51,7 +53,7 @@ const OrderConfirmation = () => {
             <Button asChild>
               <Link to="/shop">
                 <ShoppingBag size={16} className="mr-2" />
-                Continue Shopping
+                {t('continueShopping')}
               </Link>
             </Button>
             <Button variant="outline" asChild>

@@ -12,12 +12,15 @@ import {
   Store
 } from "lucide-react";
 import SearchBar from "@/components/search/SearchBar";
+import LanguageSwitcher from "@/components/language/LanguageSwitcher";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Header = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [cartItemCount, setCartItemCount] = useState(2); // Mock cart count for now
+  const { t } = useLanguage();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
@@ -34,21 +37,22 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             <Link to="/" className="text-gray-900 hover:text-gray-700 font-medium">
-              Home
+              {t('home')}
             </Link>
             <Link to="/shop" className="text-gray-900 hover:text-gray-700 font-medium">
-              Shop
+              {t('shop')}
             </Link>
             <Link to="/vendors" className="text-gray-900 hover:text-gray-700 font-medium">
-              Vendors
+              {t('vendors')}
             </Link>
             <Link to="/about" className="text-gray-900 hover:text-gray-700 font-medium">
-              About
+              {t('about')}
             </Link>
           </nav>
 
           {/* Desktop Action Buttons */}
           <div className="hidden md:flex items-center space-x-4">
+            <LanguageSwitcher />
             <button onClick={toggleSearch} className="p-2 hover:bg-gray-100 rounded-full">
               <Search size={20} />
             </button>
@@ -66,13 +70,14 @@ const Header = () => {
             <Link to="/login">
               <Button variant="outline" size="sm" className="flex items-center gap-2">
                 <User size={16} />
-                Login
+                {t('login')}
               </Button>
             </Link>
           </div>
 
           {/* Mobile Menu Toggle */}
           <div className="md:hidden flex items-center space-x-4">
+            <LanguageSwitcher />
             <Link to="/cart" className="p-2 hover:bg-gray-100 rounded-full relative">
               <ShoppingCart size={20} />
               {cartItemCount > 0 && (
@@ -100,49 +105,49 @@ const Header = () => {
               className="text-gray-900 hover:text-gray-700 py-2 border-b border-gray-100"
               onClick={toggleMenu}
             >
-              Home
+              {t('home')}
             </Link>
             <Link 
               to="/shop" 
               className="text-gray-900 hover:text-gray-700 py-2 border-b border-gray-100"
               onClick={toggleMenu}
             >
-              Shop
+              {t('shop')}
             </Link>
             <Link 
               to="/vendors" 
               className="text-gray-900 hover:text-gray-700 py-2 border-b border-gray-100"
               onClick={toggleMenu}
             >
-              Vendors
+              {t('vendors')}
             </Link>
             <Link 
               to="/about" 
               className="text-gray-900 hover:text-gray-700 py-2 border-b border-gray-100"
               onClick={toggleMenu}
             >
-              About
+              {t('about')}
             </Link>
             <Link 
               to="/wishlist" 
               className="text-gray-900 hover:text-gray-700 py-2 border-b border-gray-100"
               onClick={toggleMenu}
             >
-              Wishlist
+              {t('wishlist')}
             </Link>
             <Link 
               to="/login" 
               className="text-gray-900 hover:text-gray-700 py-2"
               onClick={toggleMenu}
             >
-              Login / Register
+              {t('login')} / {t('register')}
             </Link>
           </nav>
           <div className="mt-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
               <input 
-                placeholder="Search for products..." 
+                placeholder={t('search')}
                 className="pl-10 w-full border border-gray-200 rounded-md py-2"
                 onClick={() => {
                   toggleMenu();

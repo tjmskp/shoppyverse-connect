@@ -6,11 +6,13 @@ import ProductCard from "@/components/product/ProductCard";
 import { Button } from "@/components/ui/button";
 import { mockProducts } from "@/data/mockData";
 import { Product } from "@/types";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Category = () => {
   const { slug } = useParams<{ slug: string }>();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useLanguage();
 
   useEffect(() => {
     setLoading(true);
@@ -47,7 +49,7 @@ const Category = () => {
                 <h3 className="text-xl font-medium mb-2">No products found</h3>
                 <p className="text-gray-500 mb-4">We couldn't find any products in this category</p>
                 <Button asChild>
-                  <a href="/shop">Browse all products</a>
+                  <a href="/shop">{t('shopAll')}</a>
                 </Button>
               </div>
             ) : (

@@ -9,8 +9,11 @@ import {
   Phone,
   MapPin
 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Footer = () => {
+  const { t } = useLanguage();
+  
   return (
     <footer className="bg-black text-white">
       <div className="container mx-auto px-4 py-12">
@@ -40,31 +43,31 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-bold text-lg mb-4">Quick Links</h3>
+            <h3 className="font-bold text-lg mb-4">{t('quickLinks')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/shop" className="text-gray-400 hover:text-white transition-colors">
-                  Shop All
+                  {t('shopAll')}
                 </Link>
               </li>
               <li>
                 <Link to="/vendors" className="text-gray-400 hover:text-white transition-colors">
-                  Vendors
+                  {t('vendors')}
                 </Link>
               </li>
               <li>
                 <Link to="/about" className="text-gray-400 hover:text-white transition-colors">
-                  About Us
+                  {t('aboutUs')}
                 </Link>
               </li>
               <li>
                 <Link to="/blog" className="text-gray-400 hover:text-white transition-colors">
-                  Blog
+                  {t('blog')}
                 </Link>
               </li>
               <li>
                 <Link to="/contact" className="text-gray-400 hover:text-white transition-colors">
-                  Contact Us
+                  {t('contactUs')}
                 </Link>
               </li>
             </ul>
@@ -72,31 +75,31 @@ const Footer = () => {
 
           {/* Customer Service */}
           <div>
-            <h3 className="font-bold text-lg mb-4">Customer Service</h3>
+            <h3 className="font-bold text-lg mb-4">{t('customerService')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/faq" className="text-gray-400 hover:text-white transition-colors">
-                  FAQ
+                  {t('faq')}
                 </Link>
               </li>
               <li>
                 <Link to="/shipping" className="text-gray-400 hover:text-white transition-colors">
-                  Shipping & Returns
+                  {t('shippingReturns')}
                 </Link>
               </li>
               <li>
                 <Link to="/terms" className="text-gray-400 hover:text-white transition-colors">
-                  Terms & Conditions
+                  {t('termsConditions')}
                 </Link>
               </li>
               <li>
                 <Link to="/privacy" className="text-gray-400 hover:text-white transition-colors">
-                  Privacy Policy
+                  {t('privacyPolicy')}
                 </Link>
               </li>
               <li>
                 <Link to="/track-order" className="text-gray-400 hover:text-white transition-colors">
-                  Track Order
+                  {t('trackOrder')}
                 </Link>
               </li>
             </ul>
@@ -104,7 +107,7 @@ const Footer = () => {
 
           {/* Contact Info */}
           <div>
-            <h3 className="font-bold text-lg mb-4">Contact Us</h3>
+            <h3 className="font-bold text-lg mb-4">{t('contactUs')}</h3>
             <ul className="space-y-3">
               <li className="flex items-start">
                 <MapPin size={20} className="mr-2 text-gray-400 flex-shrink-0 mt-1" />
