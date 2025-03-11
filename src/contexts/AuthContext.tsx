@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
-import { UserProfile } from '@/types';
+import { UserProfile, SupabaseUserProfile } from '@/types';
 import { toast } from '@/hooks/use-toast';
 
 interface AuthContextType {
@@ -70,7 +70,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
 
-      setProfile(data as UserProfile);
+      // Convert the Supabase profile to our application UserProfile type
+      const supabaseProfile = data as SupabaseUserProfile;
+      const userProfile: UserProfile = {
+        id: supabaseProfile.id,
+        full_name: supabaseProfile.full_name,
+        avatar_url: supabaseProfile.avatar_url,
+        email: supabaseProfile.email,
+        phone: supabaseProfile.phone,
+        default_shipping_address: supabaseProfile.default_shipping_address ? 
+          supabaseProfile.default_shipping_address as unknown as UserProfile['default_shipping_address'] : 
+          null,
+        created_at: supabaseProfile.created_at,
+        updated_at: supabaseProfile.updated_at
+      };
+
+      setProfile(userProfile);
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
     }
@@ -136,9 +151,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     try {
+      // Convert the UserProfile to a format Supabase expects
+      const supabaseProfileData: Partial<SupabaseUserProfile> = {
+        ...(data.full_name !== undefined && { full_name: data.full_name }),
+        ...(data.avatar_url !== undefined && { avatar_url: data.avatar_url }),
+        ...(data.email !== undefined && { email: data.email }),
+        ...(data.phone !== undefined && { phone: data.phone }),
+        ...(data.default_shipping_address !== undefined && { 
+          default_shipping_address: data.default_shipping_address as any 
+        }),
+      };
+
       const { error } = await supabase
         .from('user_profiles')
-        .update(data)
+        .update(supabaseProfileData)
         .eq('id', user.id);
 
       if (error) {

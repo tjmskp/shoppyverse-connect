@@ -93,13 +93,26 @@ export interface WishlistItem {
   product?: SupabaseProduct;
 }
 
+// Modified to match Supabase's structure
 export interface UserProfile {
   id: string;
-  full_name: string;
-  avatar_url: string;
-  email: string;
-  phone: string;
-  default_shipping_address: ShippingAddress;
+  full_name: string | null;
+  avatar_url: string | null;
+  email: string | null;
+  phone: string | null;
+  default_shipping_address: ShippingAddress | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// Additional type for Supabase's UserProfile from database
+export interface SupabaseUserProfile {
+  id: string;
+  full_name: string | null;
+  avatar_url: string | null;
+  email: string | null;
+  phone: string | null;
+  default_shipping_address: any; // Use 'any' to handle Json type from database
   created_at: string;
   updated_at: string;
 }
