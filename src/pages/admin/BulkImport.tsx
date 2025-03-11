@@ -1,7 +1,17 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
+import { 
+  ChevronLeft, 
+  BarChart, 
+  Store, 
+  Users, 
+  ShoppingCart, 
+  Settings,
+  Percent
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import ProductCSVImport from "@/components/products/ProductCSVImport";
 
 const AdminBulkImport = () => {
