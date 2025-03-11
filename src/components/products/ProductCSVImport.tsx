@@ -137,7 +137,7 @@ const ProductCSVImport = ({ vendorId, onSuccess }: ProductCSVImportProps) => {
         toast({
           title: "Upload Complete",
           description: `Successfully uploaded ${results.success} products (${results.failed} failed)`,
-          variant: results.failed > 0 ? "default" : "success"
+          variant: results.failed > 0 ? "default" : "default" // Changed from "success" to "default"
         });
         
         if (onSuccess) {
