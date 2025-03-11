@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,10 +37,8 @@ const ProductCSVImport = ({ vendorId, onSuccess }: ProductCSVImportProps) => {
       
       headers.forEach((header, index) => {
         if (header === 'images') {
-          // Handle images as pipe-separated URLs
           product[header] = values[index];
         } else if (header === 'price' || header === 'discount' || header === 'stock') {
-          // Convert numeric values
           product[header] = parseFloat(values[index]);
         } else {
           product[header] = values[index];
@@ -61,10 +58,8 @@ const ProductCSVImport = ({ vendorId, onSuccess }: ProductCSVImportProps) => {
     
     for (const product of products) {
       try {
-        // For vendors, automatically assign their ID
         const vendorName = vendorId ? undefined : product.vendor;
         
-        // Convert pipe-separated image URLs to array
         const imagesArray = product.images.split('|').map(url => url.trim());
         
         const { error } = await supabase
@@ -137,7 +132,7 @@ const ProductCSVImport = ({ vendorId, onSuccess }: ProductCSVImportProps) => {
         toast({
           title: "Upload Complete",
           description: `Successfully uploaded ${results.success} products (${results.failed} failed)`,
-          variant: results.failed > 0 ? "default" : "default" // Changed from "success" to "default"
+          variant: results.failed > 0 ? "default" : "default"
         });
         
         if (onSuccess) {
