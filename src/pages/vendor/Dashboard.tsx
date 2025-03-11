@@ -8,7 +8,8 @@ import {
   Settings, 
   LogOut,
   Plus,
-  Search
+  Search,
+  Upload
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -184,10 +185,18 @@ const VendorDashboard = () => {
               <TabsContent value="products" className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h2 className="text-2xl font-bold">Products</h2>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add New Product
-                  </Button>
+                  <div className="flex space-x-2">
+                    <Button asChild>
+                      <Link to="/vendor/bulk-import">
+                        <Upload className="h-4 w-4 mr-2" />
+                        Bulk Import
+                      </Link>
+                    </Button>
+                    <Button>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add New Product
+                    </Button>
+                  </div>
                 </div>
                 
                 <div className="flex items-center space-x-2 mb-4">

@@ -20,7 +20,9 @@ import NotFound from "./pages/NotFound";
 
 // Dashboard routes
 import VendorDashboard from "./pages/vendor/Dashboard";
+import VendorBulkImport from "./pages/vendor/BulkImport";
 import AdminDashboard from "./pages/admin/Dashboard";
+import AdminBulkImport from "./pages/admin/BulkImport";
 
 const queryClient = new QueryClient();
 
@@ -46,9 +48,11 @@ const App = () => (
             
             {/* Vendor Routes */}
             <Route path="/vendor/dashboard" element={<VendorDashboard />} />
+            <Route path="/vendor/bulk-import" element={<VendorBulkImport />} />
             
             {/* Admin Routes */}
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/bulk-import" element={<AdminBulkImport />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

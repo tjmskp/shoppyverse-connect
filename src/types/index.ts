@@ -1,4 +1,3 @@
-
 export interface Product {
   id: string;
   name: string;
@@ -70,7 +69,6 @@ export interface ShippingAddress {
   phone: string;
 }
 
-// Additional types for Supabase integration
 export interface SupabaseProduct {
   id: string;
   name: string;
@@ -93,7 +91,6 @@ export interface WishlistItem {
   product?: SupabaseProduct;
 }
 
-// Modified to match Supabase's structure
 export interface UserProfile {
   id: string;
   full_name: string | null;
@@ -105,14 +102,29 @@ export interface UserProfile {
   updated_at: string;
 }
 
-// Additional type for Supabase's UserProfile from database
 export interface SupabaseUserProfile {
   id: string;
   full_name: string | null;
   avatar_url: string | null;
   email: string | null;
   phone: string | null;
-  default_shipping_address: any; // Use 'any' to handle Json type from database
+  default_shipping_address: any;
   created_at: string;
   updated_at: string;
 }
+
+export interface ProductCSVData {
+  name: string;
+  description: string;
+  price: number;
+  discount: number;
+  category: string;
+  stock: number;
+  images: string;
+  vendor?: string;
+}
+
+export const CSV_PRODUCT_SAMPLE = `name,description,price,discount,category,stock,images
+Summer T-Shirt,Comfortable cotton t-shirt for summer,1299,10,Clothing,50,https://example.com/image1.jpg|https://example.com/image2.jpg
+Leather Wallet,Genuine leather wallet with multiple compartments,1999,5,Accessories,30,https://example.com/wallet1.jpg
+`;

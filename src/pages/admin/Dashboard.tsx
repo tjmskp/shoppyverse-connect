@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { 
@@ -10,7 +9,8 @@ import {
   LogOut,
   DollarSign,
   Percent,
-  Search
+  Search,
+  Upload
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -258,13 +258,12 @@ const AdminDashboard = () => {
               <TabsContent value="vendors" className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h2 className="text-2xl font-bold">Vendors</h2>
-                  <div className="flex items-center space-x-2">
-                    <Input 
-                      placeholder="Search vendors..." 
-                      className="max-w-sm"
-                    />
-                    <Button variant="outline">Filter</Button>
-                  </div>
+                  <Button asChild>
+                    <Link to="/admin/bulk-import">
+                      <Upload className="h-4 w-4 mr-2" />
+                      Bulk Product Import
+                    </Link>
+                  </Button>
                 </div>
                 
                 <Card>
